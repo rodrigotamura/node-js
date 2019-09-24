@@ -5,11 +5,11 @@
 > > In the Node.js nonblocking model, I / O operations do not block serving to other clients. While a disk read is being done, Node.js is already serving the next clients in the queue, taking advantage of the processor's potential, thus preventing some of its power from being idle.
 > > _Source: TreinaWeb_
 
-# Trabalhando com módulos
+# Working with modules
 
-No Node.js é muito importante saber trabalhar com modularização, principalmente pelo fato do código ficar mais organizado.
+In Node.js is very important to know how to work with modularizations, mainly because our code will be more organized.
 
-Para fazer com que um script JS seja IMPORTÁVEL, é necessário utilizar um comando do Node:
+In order to make our JS code be IMPORTABLE, it is necessary to uso the follow code:
 
 ```javascript
 const Dog = {
