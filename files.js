@@ -1,4 +1,4 @@
-/* const fs = require("fs");
+const fs = require("fs");
 
 fs.writeFile("file_name.txt", "Content put here!!!", function(err) {
   if (err) {
@@ -15,8 +15,8 @@ fs.readFile("filwe_name.txt", function(err, data) {
     console.log(data.toString());
   }
 });
- */
 
+/* 
 const err = new Error("some error");
 console.log(err);
-console.log("tamura");
+console.log("tamura"); */

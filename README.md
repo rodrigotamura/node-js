@@ -155,7 +155,7 @@ const fs = require("fs");
 Let's create a new file called _file_name.txt_ and add some content within it:
 
 ```javascript
-// the function bellow is assynchronous, that's why we need a callback function
+// the function bellow is asynchronous, that's why we need a callback function
 // which receives an error variable (indicating errors)
 fs.writeFile("file_name.txt", "Content put here!!!", function(err) {
   if (err) {
@@ -182,7 +182,7 @@ fs.readFile("file_name.txt", function(err, data) {
 
 Another useful method from `fs` is `appendFile('file.txt', 'extra content')` which will append `extra content` into the end of `file.txt`.
 
-Till here we are dealing with ASSYNCHRONOUS methods, however `fs` has SYNCHRONOUS methods adding **Sync** in the end of the name of the method:
+Till here we are dealing with asyNCHRONOUS methods, however `fs` has SYNCHRONOUS methods adding **Sync** in the end of the name of the method:
 
 ```javascript
 //          👇
@@ -227,6 +227,123 @@ class TreatErrors extends Error {
 }
 
 console.log(new FancyError("Error here mannn!!"));
+```
+
+# Promises
+
+Look t the code bellow which it is reading the content from `file_name.txt`, appending this content into `another_file.txt` and finally reading the latest file:
+
+```javascript
+read("my_file.txt", function(data1, callback1) {
+  console.log(data1);
+  callback1("1111111", function(data2, callback2) {
+    console.log(data2);
+    callback2("2222222", function(data3, callback3) {
+      console.log(data3);
+      callback3("3333333", function(data4, callback4) {
+        console.log(data4);
+      });
+    });
+  });
+});
+```
+
+Note that the code bellow we are incurring in a **callback hell** 😈, which is very difficult to mantain.
+
+In order to avoid callback hell, we will use Promises:
+
+`$ npm install promise`
+
+And import it:
+
+`const Promise = require('promise');`
+
+Ok, let's read a file - which is asynchronous - using promises:
+
+```javascript
+const fs = require("fs"),
+  Promise = require("promise");
+
+function read(file) {
+  // we starts to use Promises like bellow:
+  return new Promise(function(fulfill, reject) {
+    fs.readFile(file, function(err, data) {
+      if (err) {
+        reject(err);
+      }
+
+      fulfill(data.toString());
+    });
+  });
+}
+```
+
+Note that `Promise` object receives a callback function. In this callback function it receives:
+
+- `fulfill`: when Promise has a successfully execution;
+- `reject`: when something is wrong with the expected result.
+
+Now, let's execute this function using Promise pattern:
+
+```javascript
+read("file_name.txt").then(r => console.log(r));
+```
+
+Each `then()` we can return something and we can add another chained `then()` to grab the latest returned value:
+
+```javascript
+read("file_name.txt")
+  .then(r => r.toUpperCase())
+  .then(r => console.log("Finished!!! " + r));
+```
+
+We could add `done()` method in order to say that it will not return anything else, and `catch()` will be called if `reject(err)` from Promisse is reached:
+
+```javascript
+read("file_name.txt")
+  .then(r => r.toUpperCase())
+  .catch(err => console.error(err))
+  .done(r => console.log("Finished!!! " + r));
+```
+
+Finally, let's see again our callback hell example:
+
+```javascript
+// imagine if we have the function read() without promise
+read("my_file.txt", function(data1, callback1) {
+  console.log(data1);
+  callback1("1111111", function(data2, callback2) {
+    console.log(data2);
+    callback2("2222222", function(data3, callback3) {
+      console.log(data3);
+      callback3("3333333", function(data4, callback4) {
+        console.log(data4);
+      });
+    });
+  });
+});
+```
+
+Now, the same functionality in Promises:
+
+```javascript
+// imagine if we have the function read() with promise
+read("my_file.txt")
+  .then(data => {
+    console.log(data);
+    return "111111111";
+  })
+  .then(data => {
+    console.log(data);
+    return "222222222";
+  })
+  .then(data => {
+    console.log(data);
+    return "333333333";
+  })
+  .then(data => {
+    console.log(data);
+  });
 ```
 
 # Thanks to...
