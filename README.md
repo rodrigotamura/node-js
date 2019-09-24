@@ -346,6 +346,102 @@ read("my_file.txt")
   });
 ```
 
+# Creating an HTTP server
+
+We need to import a native module called **HTTP**:
+
+```javascript
+const http = require("http");
+```
+
+Next, we will create a server using `http.createServer()`:
+
+```javascript
+var server = http.createServer(function(req, res) {
+  res.writeHead(
+    200, // status code
+    {
+      "Content-Type": "text/html" // kind of content of response
+    }
+  );
+
+  // including the content
+  res.write("<h1>HEllo world!</h1>");
+
+  // closing connection (VERY IMPORTANT!)
+  res.end();
+});
+```
+
+- `req`: is the object which will return all requests informations, such as body, method, header, and so on;
+- `res`: will return for requester (client) information related to response such as status code, content, and so on.
+
+Now, we need to set some port which the client can reach our HTTP server:
+
+```javascript
+server.listen(3000);
+```
+
+Open a browser and go to **http://localhost:3000**, and you will see "Hello world!" as a title (`<h1>`).
+
+However, we want to return an HTML file instead write it directly in our server file. We could use FileSystem module which we've seen before:
+
+```javascript
+const http = require("http"),
+  fs = require("fs");
+
+var server = http.createServer(function(req, res) {
+  fs.readFile("index.html", function(err, data) {
+    if (err) throw new Error("Ops, some problem occurred");
+    res.writeHead(
+      200, // status code
+      {
+        "Content-Type": "text/html" // kind of content of response
+      }
+    );
+
+    // including the content
+    res.write(data.toString());
+
+    // closing connection (VERY IMPORTANT!)
+    res.end();
+  });
+});
+
+server.listen(3000);
+```
+
+### Dynamic content
+
+All right, till now anyone which access http://localhost:3000 will see our index.html file.
+
+So, let's make our server retrieve a dynamic content through the URL passed by client. We will import a new module called **URL** (native) which will grab the informations from URL:
+
+```javascript
+const http = require("http"),
+  fs = require("fs"),
+  url = require("url");
+
+const server = http.createServer(function(req, res) {
+  const url_parts = url.parse(req.url);
+  var path = url_parts.pathname === "/" ? "/index.html" : url_parts.pathname;
+
+  fs.readFile(__dirname + path, function(err, html) {
+    if (err) {
+      res.writeHead(404, { "Content-type": "text/html" });
+      res.write("Not found");
+    } else {
+      res.writeHead(200, { "Content-type": "text/html" });
+      res.write(html.toString());
+    }
+
+    res.end();
+  });
+});
+```
+
+Run server and try to access http://localhost:3000/home.html.
+
 # Thanks to...
 
 I would like to thank the following people who helped me in this short article:
