@@ -146,7 +146,7 @@ Rex.emit("bark_please"); // not displays
 
 # Handling files - write and read
 
-Node.js has a nattive module called **fs (file system)**:
+Node.js has a native module called **fs (file system)**:
 
 ```javascript
 const fs = require("fs");
