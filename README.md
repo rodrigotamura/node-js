@@ -1,3 +1,28 @@
+# Table of contents
+
+- [Introduction](#introduction)
+- [Working with modules](#working-with-modules)
+- [Event emitters](#event-emitters)
+  - [Setting params](#setting-params)
+  - [Inharitance](#inharitance)
+  - [Executing evente once](#executing-evente-once)
+- [Handling files - write and read](#handling-files---write-and-read)
+- [Error handling](#error-handling)
+- [Promises](#promises)
+- [Creating an HTTP server](#creating-an-http-server)
+  - [Dynamic content](#dynamic-content)
+- [Websockets](#websockets)
+  - [The server](#the-server)
+  - [The client](#the-client)
+  - [First connection](#first-connection)
+  * [Communication between server - client](#communication-between-server---client)
+    - [Server's side](#server-s-side)
+    - [Client's side](#client-s-side)
+  * [Building a chatroom](#building-a-chatroom)
+- [Node.js and streaming](#nodejs-and-streaming)
+- [Making Node.js app scalable: clusters](#making-nodejs-app-scalable--clusters)
+- [Thanks to...](#thanks-to)
+
 # Introduction
 
 > > Node.js was created with a non-blocking model in mind when I / O operations are performed. When we talk about non-blocking model, we need to talk about the traditional development model using traditional languages ​​.... If you are developing with languages ​​like Java or C # without using parallelism and asynchronous features, each line runs only when the previous line of code has finished executing. Each line “blocks” the execution of the subsequent line until it finishes its execution. Now, in the context of web applications, this can be a problem. When a server receives a request from a client, when performing an I / O operation, processing is stalled. This means that when operations such as disk read or database query are performed, requests from other clients are queued. After processing is completed and answered to the first customer, the next customer is served. The more requests, the longer the queue gets, and the slower the response gets.
