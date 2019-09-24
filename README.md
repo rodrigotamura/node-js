@@ -619,6 +619,20 @@ See:
 
 ![socket-live](socket-sample.gif)
 
+# Node.js and streaming
+
+Streaming is basically who could we distribute data in packages format. Normally when server send to client some audio, video. It is very used by Youtube and Netflix in their video distributions. In truth the client is not downloading a full video, but we are receiving packages and these packages are displaying on our screens.
+
+In this example we will make a video streaming. So we need a video file (a big one - >~100MB).
+
+Please, open [this file](streaming.js) and see two examples: with streaming and without streaming.
+
+You will se that the code WITH streaming we can jump to the middle of video without waiting for loaded it. However the code WITHOUT streaming the video open normally, but we could not jump to the middle of it because it is loading since beginning.
+
+See difference in practice:
+
+![stream](stream.gif)
+
 # Thanks to...
 
 I would like to thank the following people who helped me in this short article:
