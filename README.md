@@ -633,8 +633,75 @@ See difference in practice:
 
 ![stream](stream.gif)
 
+# Making Nod.js app scalable: clusters
+
+With Javascript itself, it works only with one thread. However Node.js allow us to make its applications scalable by clusterization, breaking the application in several small processes using native modules from Node.js.
+
+We need to import three modules:
+
+```javascript
+const cluster = require("cluster"),
+  http = require("http"), // yes, we'll create a server
+  numCPUs = require("os").cpus().length; // getting the number of cores from the server
+```
+
+The `os` module gets many information from the Operation System. And the method `os.cpus()` get an object of CPUs and its informations.
+
+Next, we should know the the core that current Node application is running is the main core (master). The main core is reunning the Node process which started the application. If it is the Master, we will break into small process which will be the clusters:
+
+```javascript
+if (cluster.isMater) {
+  for (var i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+}
+```
+
+Now, let's add some listeners within our clusters, because clusters also inherit event emitter:
+
+```javascript
+if (cluster.isMater) {
+  for (var i = 0; i < numCPUs; i++) {
+    cluster.fork(); // Spawn a new worker process.
+  }
+
+  cluster.on("online", worker => {
+    console.log(`worker ${worker.process.pid} is online`);
+  });
+
+  cluster.on("listening", address => {
+    console.log(`worker is listening`);
+  });
+
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`worker ${worker.process.pid} died`);
+  });
+}
+```
+
+Now, let's implement an `else` for our `if(cluster.isMaster)` indicating that we are dealing with a Node process which was created during `fork`.
+
+```javascript
+if (cluster.isMaster) {
+  /// ....
+} else {
+  // creating a server in this process
+  http
+    .createServer((req, res) => {
+      res.writeHead(200);
+      res.end(`process ${process.pid} says hello!`);
+    })
+    .listen(8000);
+}
+```
+
+So, we are creating a web server in not master cluster showed by `${process.pid}`.
+
+![cluster](cluster.gif)
+
 # Thanks to...
 
 I would like to thank the following people who helped me in this short article:
 
+- [Treinaweb](https://www.treinaweb.com.br) (for Node.js complete course)
 - [rfns](https://github.com/rfns) (part of error handling session)
