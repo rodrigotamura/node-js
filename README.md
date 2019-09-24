@@ -617,7 +617,7 @@ We wil include a code snippet which will LISTEN to the event called `server_hell
 
 See:
 
-![socket-live](socket-live.gif)
+![socket-live](socket-sample.gif)
 
 # Thanks to...
 
