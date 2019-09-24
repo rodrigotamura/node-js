@@ -178,6 +178,19 @@ fs.readFile("file_name.txt", function(err, data) {
 });
 ```
 
+👉 It is not necessary to close files when we are handling it (e.g., PHP)
+
+Another useful method from `fs` is `appendFile('file.txt', 'extra content')` which will append `extra content` into the end of `file.txt`.
+
+Till here we are dealing with ASSYNCHRONOUS methods, however `fs` has SYNCHRONOUS methods adding **Sync** in the end of the name of the method:
+
+```javascript
+//          👇
+fs.readFileSync(...); // callback is not necessary
+```
+
+The problem is that the rest of the code bellow of this `readFileSync()` will be executed only after it finish the process of reading file.
+
 # Error handling
 
 When our app has some error, generally it will crash and stops to execute the next lines.
@@ -195,7 +208,8 @@ And the next code WILL NOT BE executed!
 We can treat these errors without crash our application using `Error` object (JS native) with the code bellow:
 
 ```javascript
-new Error("A standard error");
+const err = new Error("A standard error");
+console.log(err);
 ```
 
 It will generate an error at the console, however it will not crash the app, keeping our code running till the end.
@@ -214,3 +228,9 @@ class TreatErrors extends Error {
 
 console.log(new FancyError("Error here mannn!!"));
 ```
+
+# Thanks to...
+
+I would like to thank the following people who helped me in this short article:
+
+- [rfns](https://github.com/rfns) (part of error handling session)
