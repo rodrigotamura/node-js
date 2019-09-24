@@ -31,7 +31,7 @@ const http = require("http"),
 const server = http.createServer(function(req, res) {
   const url_parts = url.parse(req.url);
   var path = url_parts.pathname === "/" ? "/index.html" : url_parts.pathname;
-  console.log(__dirname + path);
+
   fs.readFile(__dirname + path, function(err, html) {
     if (err) {
       res.writeHead(404, { "Content-type": "text/html" });

@@ -1,13 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=<h1>>, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
+    <title>Socket io</title>
   </head>
   <body>
-    <h1>New we are in an HTML page!</h1>
-    <strong>Hello world!</strong>
+    <h1>Chatroom</h1>
+
+    <input type="text" id="name" />
+
+    <br />
+    <br />
+
+    <textarea
+      rows="5"
+      cols="100"
+      id="message"
+      onkeypress="sendMessage()"
+    ></textarea>
+
+    <div id="messages" style="white-space: pre-line"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
+    <script>
+      const socket = io("http://localhost:3000");
+
+      socket.on("server_hello", receiveMessage);
+
+      function sendMessage() {
+        if (event.keyCode === 13 && !event.shiftKey) {
+          const name = document.querySelector("#name").value;
+          const message = document.querySelector("#message").value;
+
+          document.querySelector("#message").value = "";
+
+          socket.emit("client_message", { name, message });
+        }
+      }
+
+      function receiveMessage(data) {
+        const element = document.querySelector("#messages");
+        element.innerHTML += `
+          <div>
+            <strong>${data.name}</strong> says: ${data.message}
+          </div>
+        `;
+      }
+    </script>
   </body>
 </html>

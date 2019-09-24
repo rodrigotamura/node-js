@@ -442,6 +442,183 @@ const server = http.createServer(function(req, res) {
 
 Run server and try to access http://localhost:3000/home.html.
 
+# Websockets
+
+> The WebSocket API is an advanced technology that makes it possible to open a two-way interactive communication session between the user's browser and a server. With this API, you can send messages to a server and receive event-driven responses without having to poll the server for a reply. _Resource: [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)_
+
+### The server
+
+Let's install and external lib called **Socket.io** and create our Websocket Server:
+
+`$ npm install socket.io`
+
+In a specific file, let's import it:
+
+```javascript
+const io = require("socket.io")(3000); // here we need set the port
+```
+
+Then, we will create an event listener called `connection` (from Socket.io) which will run the follow function:
+
+```javascript
+io.on("connection", socket => {
+  console.log("New user connected");
+});
+```
+
+Along with the variable `socket` (callback function) we will deal with Socket.io. We will work a lot with **event emitters** which we've seen before.
+
+### The client
+
+The next, we will create another file that will work as a client. In thi file we will import a file from Socket.io which works at the client side (get the code at https://socket.io):
+
+```html
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
+<script>
+  const socket = io("http://localhost:3000"); // connecting to websocket server
+</script>
+```
+
+### First connection
+
+At the server side, run `$ node socket.io`.
+
+At the client side, run `$ http-server`.
+
+> `http-server` is another package which build a web server. `$ npm install http-server -g`
+
+You might see _'New user connected'_ at the Node's console.
+
+## Communication between server - client
+
+### Server's side
+
+Let's add the follow line which _socket_ is waiting for a messsage. This event will be `client_message`:
+
+```javascript
+io.on("connection", socket => {
+  console.log("New user connected");
+  //              ⤵
+  socket.on("client_message", data_from_client => {
+    console.log(data_from_client);
+  });
+});
+```
+
+### Client's side
+
+Remembering the concept of Event Emitters, at the client's side we will implement the followed code snippet:
+
+```html
+<script>
+  const socket = io("http://localhost:3000");
+
+  // sending message to server
+  socket.emit("client_message", "Hello server! 🙌");
+</script>
+```
+
+Run servers, go to http://localhost:8080 and Node console will displays:
+
+![socket](socket.png)
+
+## Building a chatroom
+
+Now we will show you how to send a message from server to Client through this example.
+
+See the code bellow from client's side:
+
+```html
+<h1>Chatroom</h1>
+
+<input type="text" id="name" />
+
+<br />
+<br />
+
+<textarea
+  rows="5"
+  cols="100"
+  id="message"
+  onkeypress="sendMessage()"
+></textarea>
+
+<div id="messages" style="white-space: pre-line"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
+<script>
+  const socket = io("http://localhost:3000");
+
+  function sendMessage() {
+    if (event.keyCode === 13 && !event.shiftKey) {
+      const name = document.querySelector("#name").value;
+      const message = document.querySelector("#message").value;
+
+      document.querySelector("#message").value = "";
+
+      socket.emit("client_hello", { name, message });
+    }
+  }
+</script>
+```
+
+So, when user press <kbd>Enter</kbd> while it is writing on `<textarea>`, the message will be sent to server.
+
+Server will receive the message, and send back to client:
+
+```javascript
+io.on("connection", socket => {
+  console.log("New user connected");
+
+  socket.on("client_message", data_from_client => {
+    const data = data_from_client;
+
+    /**
+     * socket.emit(): only user who sent the message will receive
+     * socket.broadcast.emit(): all connected users will receive
+     *                          the message, except who sent
+     * io.sockets.emit(): everybody will receive
+     */
+    io.sockets.emit("server_hello", data);
+  });
+});
+```
+
+We wil include a code snippet which will LISTEN to the event called `server_hello`, comming from server:
+
+```html
+<script>
+  const socket = io("http://localhost:3000");
+
+  // 👇 add this code, and implement receiveMessage function (see bellow)
+  socket.on("server_hello", receiveMessage);
+
+  function sendMessage() {
+    if (event.keyCode === 13 && !event.shiftKey) {
+      const name = document.querySelector("#name").value;
+      const message = document.querySelector("#message").value;
+
+      document.querySelector("#message").value = "";
+
+      socket.emit("client_hello", { name, message });
+    }
+  }
+
+  function receiveMessage(data) {
+    const element = document.querySelector("#messages");
+    element.innerHTML += `
+          <div>
+            <strong>${data.name}</strong> says: ${data.message}
+          </div>
+        `;
+  }
+</script>
+```
+
+See:
+
+![socket-live](socket-live.gif)
+
 # Thanks to...
 
 I would like to thank the following people who helped me in this short article:
