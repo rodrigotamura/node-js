@@ -633,7 +633,7 @@ See difference in practice:
 
 ![stream](stream.gif)
 
-# Making Nod.js app scalable: clusters
+# Making Node.js app scalable: clusters
 
 With Javascript itself, it works only with one thread. However Node.js allow us to make its applications scalable by clusterization, breaking the application in several small processes using native modules from Node.js.
 
